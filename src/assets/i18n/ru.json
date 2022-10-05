@@ -1,0 +1,61 @@
+{
+    "direction": "ltr",
+    "FlagCode": "RU",
+    "LanguageName": "Русский",
+    "AppName": "Litefy",
+
+    "LoginDescriptionText": "Litefy. Клиент Spotify для бюджетных устройств",
+	"LoginText": "Мы считаем, что для прослушивания музыки не требуется суперустройство. Мы считаем, что вам не нужно быть в курсе всех новых технологий, чтобы развлекаться. Вот почему существует Litefy.",
+    "LoginButtonText": "Войти через Spotify",
+
+    "SearchPlaceholderText": "Треки, альбом, исполнитель, плейлист, шоу, эпизоды ...",
+
+	"MenuSearchText": "Поиск",
+    "MenuLibraryText": "Библиотека",
+    "MenuKaraokeText": "Режим караоке",
+
+    "HomeArtistsText": "Ваши любимые исполнители",
+	"HomeMusicsText": "Ваши любимые песни",
+    "HomeAlbumsText": "Новые альбомы",
+	"HomePlaylistsText": "Рекомендуемые плейлисты",
+
+    "ArtistTracksText": "Самые популярные треки",
+	"ArtistAlbumsText": "Альбомы",
+	"ArtistRelatedText": "Связанные исполнители",
+
+    "Hello": "Привет",
+    "LibraryTracksText": "Треки",
+    "LibraryAlbumsText": "Альбомы",
+	"LibraryPlaylistsText": "Плейлисты",
+
+	"MusicListTracks": "Трек",
+	"MusicListTracksPlural": "Треки",
+    "MusicListFollowers": "Подписчик",
+	"MusicListFollowersPlural": "Подписчиков",
+    "DescriptionText": "Описание",
+
+	"PlayingText": "Воспроизведение возобновлено",
+    "PausedText": "Воспроизведение приостановлено",
+    "NextText": "Следующий трек",
+	"PreviousText": "Предыдущий трек",
+    "ShuffleOnText": "Включен режим воспроизведения в случайном порядке",
+	"ShuffleOffText": "Режим воспроизведения в случайном порядке отключён",
+
+    "ExitText": "Выход",
+    "FollowersText": "Подписчик",
+    "FollowersTextPlural": "Подписчиков",
+    "ProfileText": "Профиль",
+    "SettingsText": "Настройки",
+
+    "SearchArtists": "Исполнители",
+
+    "KaraokeNotFoundText": "Текст песни не найден, но вы можете попробовать выполнить поиск вручную, используя кнопку ниже.",
+	"KaraokeSearchText": "Поиск",
+
+	"SettingsPageTitle": "Настройки",
+    "SettingsImageText": "Загружать изображения (альбом, исполнители, плейлисты и т.д.)",
+
+    "MenuPodcastText": "Подкасты",
+    "PodcastsShowsText": "Шоу",
+    "PodcastsEpisodesText": "Эпизоды"
+}

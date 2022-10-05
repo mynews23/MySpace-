@@ -1,0 +1,477 @@
+<div
+    class="header {{ ('direction' | translate) === 'rtl' ? 'rtl-custom' : '' }}"
+>
+    <h2>
+        {{ title }}
+    </h2>
+
+    <!-- <div class="acao" *ngIf="type == 'track'">
+        <button type="button" (click)="playAll()" class="button-custom">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon icon-tabler icon-tabler-player-play"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                stroke-width="1"
+                stroke="#ffffff"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M7 4v16l13 -8z" />
+            </svg>
+        </button>
+    </div> -->
+</div>
+
+<div
+    class="content-listing list-group {{
+        ('direction' | translate) === 'rtl' ? 'rtl-custom' : ''
+    }}"
+    [ngClass]="{ 'mobile-mode': mobileMode }"
+    [ngClass]="type == 'artist' && homeRoute() ? 'homeArtist' : ''"
+    (scroll)="doScroll($event)"
+>
+    <div
+        [ngClass]="{
+            active:
+                (type == 'track' || type == 'album') &&
+                (playerState?.item.id == getRootItem(item).id ||
+                    currentAlbum == getRootItem(item).id)
+        }"
+        class="content-listing-item"
+        *ngFor="let item of list | slice: 0:lastItem"
+        (click)="openArtist(type == 'artist' ? getRootItem(item).id : null)"
+    >
+        <div
+            class="img"
+            [ngClass]="type == 'artist' && homeRoute() ? 'homeArtist' : ''"
+            *ngIf="canLoadImage()"
+        >
+            <img
+                *ngIf="type == 'track'"
+                style="width: 100%; height: 100%"
+                onerror="this.src = 'assets/standart-album-icon.png'"
+                [src]="
+                    album
+                        ? album.images[0].url
+                        : getRootItem(item).album.images[0]?.url
+                "
+                alt="getRootItem(item).album.name"
+            />
+
+            <img
+                *ngIf="
+                    type == 'playlist' || type == 'album' || type == 'artist'
+                "
+                style="width: 100%; height: 100%"
+                onerror="this.src = 'assets/standart-album-icon.png'"
+                [src]="getRootItem(item).images[0]?.url"
+                [alt]="getRootItem(item).name"
+            />
+
+            <img
+                *ngIf="type == 'show'"
+                style="width: 100%; height: 100%"
+                onerror="this.src = 'assets/standart-album-icon.png'"
+                [src]="getRootItem(item).show.images[0]?.url"
+                [alt]="getRootItem(item).show.name"
+            />
+
+            <img
+                *ngIf="type == 'podcast'"
+                style="width: 100%; height: 100%"
+                onerror="this.src = 'assets/standart-album-icon.png'"
+                [src]="getRootItem(item).episode.images[0]?.url"
+                [alt]="getRootItem(item).episode.name"
+            />
+
+            <img
+                *ngIf="type == 'podcastPage' || type == 'podcastSearch'"
+                style="width: 100%; height: 100%"
+                onerror="this.src = 'assets/standart-album-icon.png'"
+                [src]="getRootItem(item).images[0]?.url"
+                [alt]="getRootItem(item).name"
+            />
+
+            <div class="optionsBox" *ngIf="type != 'artist' && homeRoute()">
+                <div class="options">
+                    <div class="btn-group" role="group">
+                        <button
+                            *ngIf="type == 'track' && premium"
+                            class="optionsPlayButton"
+                            (click)="add(item)"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-plus"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                        </button>
+
+                        <button
+                            *ngIf="
+                                type != 'artist' &&
+                                type != 'track' &&
+                                type != 'show' &&
+                                type != 'podcast' &&
+                                type != 'podcastPage' &&
+                                type != 'podcastSearch'
+                            "
+                            class="optionsPlayButton"
+                            (click)="
+                                type == 'album'
+                                    ? playAlbum(getRootItem(item).id)
+                                    : playPlaylist(getRootItem(item))
+                            "
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-player-play"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <path d="M7 4v16l13 -8z" />
+                            </svg>
+                        </button>
+
+                        <button
+                            *ngIf="type == 'show'"
+                            class="optionsPlayButton"
+                            (click)="
+                                type == 'show'
+                                    ? playShow(getRootItem(item).show.id)
+                                    : playPlaylist(getRootItem(item))
+                            "
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-player-play"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <path d="M7 4v16l13 -8z" />
+                            </svg>
+                        </button>
+
+                        <button
+                            *ngIf="type == 'podcast'"
+                            class="optionsPlayButton"
+                            (click)="playEpisode(getRootItem(item).episode)"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-player-play"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <path d="M7 4v16l13 -8z" />
+                            </svg>
+                        </button>
+                        <button
+                            *ngIf="type == 'podcastSearch'"
+                            class="optionsPlayButton"
+                            (click)="playShow(getRootItem(item).id)"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-player-play"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <path d="M7 4v16l13 -8z" />
+                            </svg>
+                        </button>
+                        <button
+                            *ngIf="type == 'podcastPage'"
+                            class="optionsPlayButton"
+                            (click)="playEpisode(getRootItem(item))"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-player-play"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <path d="M7 4v16l13 -8z" />
+                            </svg>
+                        </button>
+
+                        <button
+                            *ngIf="type == 'track'"
+                            class="optionsPlayButton"
+                            (click)="playTrack(item)"
+                        >
+                            <svg
+                                *ngIf="
+                                    playerState?.item.id == getRootItem(item).id
+                                        ? !playerState?.is_playing
+                                        : true
+                                "
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-player-play"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <path d="M7 4v16l13 -8z" />
+                            </svg>
+
+                            <svg
+                                *ngIf="
+                                    playerState?.item.id ==
+                                        getRootItem(item).id &&
+                                    playerState?.is_playing
+                                "
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="icon icon-tabler icon-tabler-player-pause"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                stroke-width="1"
+                                stroke="#ffffff"
+                                fill="none"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                />
+                                <rect
+                                    x="6"
+                                    y="5"
+                                    width="4"
+                                    height="14"
+                                    rx="1"
+                                />
+                                <rect
+                                    x="14"
+                                    y="5"
+                                    width="4"
+                                    height="14"
+                                    rx="1"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <span *ngIf="type == 'track'" class="timeStamp">{{
+                getRootItem(item).duration_ms | msToString
+            }}</span>
+        </div>
+
+        <div class="detailsBox">
+            <div *ngIf="type == 'track'" class="detailsBoxContent">
+                <p class="title">
+                    {{ getRootItem(item).name }}
+                </p>
+                <span>
+                    <a
+                        class="album"
+                        [routerLink]="[
+                            '/album/' +
+                                (album ? album.id : getRootItem(item).album.id)
+                        ]"
+                    >
+                        {{ album ? album.name : getRootItem(item).album.name }}
+                    </a>
+                    <span> • </span>
+                    <a
+                        class="artist"
+                        [routerLink]="[
+                            '/artist/' +
+                                (album != null
+                                    ? album.artists[0].id
+                                    : getRootItem(item).album.artists[0].id)
+                        ]"
+                    >
+                        {{
+                            album
+                                ? album.artists[0].name
+                                : getRootItem(item).album.artists[0].name
+                        }}
+                    </a>
+                </span>
+            </div>
+
+            <div class="detailsBoxContent" *ngIf="type == 'album'">
+                <a
+                    class="title"
+                    [routerLink]="['/album/' + getRootItem(item).id]"
+                >
+                    {{ getRootItem(item).name }}
+                </a>
+
+                <span>
+                    <a
+                        class="subText"
+                        [routerLink]="[
+                            '/artist/' + getRootItem(item).artists[0].id
+                        ]"
+                    >
+                        {{ getRootItem(item).artists[0].name }}
+                    </a>
+                    <span class="subText"> • </span>
+                    <span class="subText">
+                        {{ getRootItem(item).total_tracks }}
+
+                        <span style="text-transform: lowercase">
+                            {{
+                                getRootItem(item).total_tracks > 1 ||
+                                getRootItem(item).total_tracks == 0
+                                    ? ("MusicListTracksPlural" | translate)
+                                    : ("MusicListTracks" | translate)
+                            }}
+                        </span>
+                    </span>
+                </span>
+            </div>
+
+            <div class="detailsBoxContent" *ngIf="type == 'playlist'">
+                <a
+                    class="title"
+                    [routerLink]="['/playlist/' + getRootItem(item).id]"
+                >
+                    {{ getRootItem(item).name }}
+                </a>
+
+                <span class="subText">
+                    {{ getRootItem(item).owner.display_name }}
+                    <span> • </span>
+                    <span
+                        >{{ getRootItem(item).tracks.total }}&nbsp;<span
+                            style="text-transform: lowercase"
+                            >{{
+                                getRootItem(item).tracks.total > 1 ||
+                                getRootItem(item).tracks.total == 0
+                                    ? ("MusicListTracksPlural" | translate)
+                                    : ("MusicListTracks" | translate)
+                            }}</span
+                        >
+                    </span>
+                </span>
+            </div>
+
+            <!--Artist Text Start-->
+            <span *ngIf="type == 'artist'" class="artistName">
+                {{ getRootItem(item).name }}
+            </span>
+            <!--Artist Text End-->
+
+            <!--Show Text Start-->
+            <span *ngIf="type == 'show'" class="d-flex flex-row flex-wrap"
+                ><a [routerLink]="['/show/' + getRootItem(item).show.id]">{{
+                    getRootItem(item).show.name
+                }}</a>
+                <span> • </span>
+
+                <span
+                    >{{ getRootItem(item).show.total_episodes }} Episodes</span
+                >
+            </span>
+            <!--Show Text End-->
+            <!--Show Text Start-->
+            <span *ngIf="type == 'podcast'" class="d-flex flex-row flex-wrap"
+                >{{ getRootItem(item).episode.name }}
+            </span>
+            <span
+                *ngIf="type == 'podcastPage'"
+                class="d-flex flex-row flex-wrap"
+                >{{ getRootItem(item).name }}
+            </span>
+            <span
+                *ngIf="type == 'podcastSearch'"
+                class="d-flex flex-row flex-wrap"
+                ><a [routerLink]="['/show/' + getRootItem(item).id]">{{
+                    getRootItem(item).name
+                }}</a></span
+            >
+            <!--Show Text End-->
+        </div>
+    </div>
+</div>
